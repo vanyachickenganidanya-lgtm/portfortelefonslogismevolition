@@ -1,12 +1,9 @@
-//! Bevy рисует схему. Slint — телефонная панель. Логика элементов — Funo.
+//! Bevy рисует схему. Логика элементов — Funo (`funo/components`).
 
 use bevy::prelude::*;
 use logismevo_sim as sim;
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
 use std::time::Duration;
-
-slint::include_modules!();
 
 #[derive(Resource)]
 struct WorldSim {
@@ -18,27 +15,13 @@ struct WorldSim {
     next_id: u32,
 }
 
-#[derive(Resource)]
-struct SlintHost(Arc<Mutex<PhoneShell>>);
-
 fn main() {
-    let lib = sim::Library::load_dir(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../funo/components"))
-        .unwrap_or(sim::Library {
-            comps: Default::default(),
-        });
-
-    let ui = PhoneShell::new().expect("slint");
-    let ui = Arc::new(Mutex::new(ui));
-
-    {
-        let u = ui.lock().unwrap();
-        let weak = u.as_weak();
-        u.on_pick_tool(move |t| {
-            let _ = t;
-            let _ = weak;
-        });
-        u.show().ok();
-    }
+    let lib = sim::Library::load_dir(
+        &PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../funo/components"),
+    )
+    .unwrap_or(sim::Library {
+        comps: Default::default(),
+    });
 
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
@@ -57,7 +40,6 @@ fn main() {
             history: vec![],
             next_id: 10,
         })
-        .insert_resource(SlintHost(ui))
         .insert_resource(Time::<Fixed>::from_duration(Duration::from_millis(280)))
         .add_systems(Startup, setup)
         .add_systems(FixedUpdate, tick_sim)
@@ -70,19 +52,20 @@ fn setup(mut commands: Commands) {
 }
 
 fn tick_sim(mut world: ResMut<WorldSim>) {
-    if world.running {
-        world.circuit.tick(&world.lib);
-        let snap: String = world
-            .circuit
-            .nodes
-            .iter()
-            .map(|n| format!("{}{}", n.kind.chars().next().unwrap_or('?'), n.value))
-            .collect::<Vec<_>>()
-            .join(" ");
-        world.history.push(snap);
-        if world.history.len() > 12 {
-            world.history.remove(0);
-        }
+    if !world.running {
+        return;
+    }
+    world.circuit.tick(&world.lib);
+    let snap: String = world
+        .circuit
+        .nodes
+        .iter()
+        .map(|n| format!("{}{}", n.kind.chars().next().unwrap_or('?'), n.value))
+        .collect::<Vec<_>>()
+        .join(" ");
+    world.history.push(snap);
+    if world.history.len() > 12 {
+        world.history.remove(0);
     }
 }
 
@@ -131,16 +114,11 @@ fn handle_touch(
         return;
     };
 
-    if world.tool == "pin" {
-        if let Some(n) = world
-            .circuit
-            .nodes
-            .iter_mut()
-            .find(|n| n.kind == "pin" && (n.x - world_pos.x).hypot(n.y - world_pos.y) < 28.0)
-        {
-            n.value ^= 1;
-            return;
-        }
+    if let Some(n) = world.circuit.nodes.iter_mut().find(|n| {
+        n.kind == "pin" && (n.x - world_pos.x).hypot(n.y - world_pos.y) < 28.0
+    }) {
+        n.value ^= 1;
+        return;
     }
 
     let id = world.next_id;

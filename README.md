@@ -22,6 +22,20 @@ ui/phone.slint     мобильный интерфейс
 web/               живой превью для телефона / браузера
 ```
 
+## Android APK
+
+Проект в `android/` — WebView с тем же редактором и элементами Funo.
+
+Сборка в GitHub Actions (джоб **Android APK**), артефакт `logismevo-phone-apk` → `app-debug.apk`.
+
+Локально:
+
+```bash
+./android/pack-assets.sh
+# нужен Android SDK
+gradle -p android assembleDebug
+```
+
 ## Запуск превью
 
 ```bash

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>LogismEvo Phone</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="phone">
+    <header>
+      <div class="brand">LOGISM EVO · PHONE</div>
+      <div class="sub">Bevy + Slint · элементы на <b>Funo</b></div>
+    </header>
+    <div id="status">Тап по холсту — поставить элемент. Тап по PIN — 0/1. Проведите от кружка к кружку — провод.</div>
+    <canvas id="cv" width="390" height="420"></canvas>
+    <pre id="chrono"></pre>
+    <div class="tools" id="tools"></div>
+    <div class="row">
+      <button id="run">⏸ пауза</button>
+      <button id="step">шаг</button>
+      <button id="demo">демо XOR</button>
+      <button id="clear">очистить</button>
+    </div>
+    <details>
+      <summary>Исходник Funo выбранного элемента</summary>
+      <pre id="funoSrc"></pre>
+    </details>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

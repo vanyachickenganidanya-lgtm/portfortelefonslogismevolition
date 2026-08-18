@@ -1,0 +1,73 @@
+import { Button, VerticalBox, HorizontalBox, ScrollView } from "std-widgets.slint";
+
+export component PhoneShell inherits Window {
+    in-out property <string> status: "Поставьте элементы пальцем";
+    in-out property <string> chrono: "";
+    in-out property <string> tool: "and";
+    in-out property <bool> running: true;
+    callback pick-tool(string);
+    callback toggle-run();
+    callback step();
+    callback clear();
+    callback load-demo();
+
+    title: "LogismEvo Phone";
+    background: #0b1020;
+    preferred-width: 390px;
+    preferred-height: 844px;
+
+    VerticalBox {
+        padding: 12px;
+        spacing: 8px;
+
+        Text {
+            text: "LOGISM EVO · PHONE";
+            color: #7ee0ff;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        Text {
+            text: status;
+            color: #c8d4f0;
+            wrap: word-wrap;
+        }
+
+        HorizontalBox {
+            Button { text: "AND"; clicked => { pick-tool("and"); } }
+            Button { text: "OR"; clicked => { pick-tool("or"); } }
+            Button { text: "NOT"; clicked => { pick-tool("not"); } }
+            Button { text: "XOR"; clicked => { pick-tool("xor"); } }
+        }
+        HorizontalBox {
+            Button { text: "NAND"; clicked => { pick-tool("nand"); } }
+            Button { text: "PIN"; clicked => { pick-tool("pin"); } }
+            Button { text: "LED"; clicked => { pick-tool("led"); } }
+            Button { text: "CLK"; clicked => { pick-tool("clk"); } }
+        }
+        HorizontalBox {
+            Button { text: running ? "⏸ пауза" : "▶ пуск"; clicked => { toggle-run(); } }
+            Button { text: "шаг"; clicked => { step(); } }
+            Button { text: "демо"; clicked => { load-demo(); } }
+            Button { text: "очистить"; clicked => { clear(); } }
+        }
+
+        Rectangle {
+            height: 120px;
+            background: #11182c;
+            border-radius: 12px;
+            Text {
+                text: chrono;
+                color: #9dffb0;
+                font-family: monospace;
+                font-size: 11px;
+                wrap: word-wrap;
+            }
+        }
+
+        Text {
+            text: "Элементы кодируются в funo/components/*.fun";
+            color: #6b7794;
+            font-size: 11px;
+        }
+    }
+}

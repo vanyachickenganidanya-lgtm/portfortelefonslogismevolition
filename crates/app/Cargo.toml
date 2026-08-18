@@ -1,0 +1,25 @@
+[package]
+name = "logismevo-phone"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+default-run = "logismevo-phone"
+
+[dependencies]
+logismevo_sim = { path = "../sim" }
+bevy = { version = "0.15", default-features = false, features = [
+    "bevy_winit",
+    "bevy_render",
+    "bevy_core_pipeline",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_asset",
+    "png",
+    "x11",
+] }
+slint = "1.9"
+serde_json = "1"
+
+[build-dependencies]
+slint-build = "1.9"
